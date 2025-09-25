@@ -35,7 +35,7 @@ const UserButton = () => {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" side="right" className="w-60">
+      <DropdownMenuContent align="center" side="bottom" className="w-60">
         <DropdownMenuItem
           disabled={false}
           onClick={() => signOut()}
