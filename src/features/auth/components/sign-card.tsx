@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthActions } from "@convex-dev/auth/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,13 +15,41 @@ import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SignFlow } from "../types";
 import { useState } from "react";
+import { TriangleAlert } from "lucide-react";
 
 const SignCard = () => {
-  const [signFlow, setSignFlow] = useState<SignFlow>("signUp");
+  const { signIn } = useAuthActions();
+  const [signFlow, setSignFlow] = useState<SignFlow>("signIn");
+  const [isPending, setIsPending] = useState(false);
 
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [pwd, setPwd] = useState("");
-  const [confirmPwd, setConfirmPwd] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [error, setError] = useState("");
+
+  const onSign = (provider: "google" | "github") => {
+    setIsPending(true);
+    signIn(provider, { flow: signFlow })
+      .catch(() => setError("Something went wrong"))
+      .finally(() => setIsPending(false));
+  };
+
+  const onPassword = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (signFlow === "signUp" && password !== confirmPassword) {
+      setError("Passwords don't match");
+      return;
+    }
+
+    setIsPending(true);
+
+    signIn("password", { name: fullName, email, password, flow: signFlow })
+      .catch(() => setError("Something went wrong"))
+      .finally(() => setIsPending(false));
+  };
 
   return (
     <Card className="h-full w-full p-8">
@@ -28,14 +57,29 @@ const SignCard = () => {
         <CardTitle>
           {signFlow === "signIn" ? "Login" : "Sign up"} to continue
         </CardTitle>
+        <CardDescription>
+          Use your email or another service to continue
+        </CardDescription>
       </CardHeader>
-      <CardDescription>
-        Use your email or another service to continue
-      </CardDescription>
+      {error ? (
+        <div className="flex items-center gap-x-2 bg-destructive/15 p-2 text-destructive text-sm rounded-md">
+          <TriangleAlert className="size-4" /> {error}
+        </div>
+      ) : null}
       <CardContent className="space-y-5 px-0 pb-0">
-        <form className="space-y-2.5">
+        <form className="space-y-2.5" onSubmit={onPassword}>
+          {signFlow === "signUp" ? (
+            <Input
+              disabled={isPending}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              type="text"
+              placeholder="Full name"
+              required
+            />
+          ) : null}
           <Input
-            disabled={false}
+            disabled={isPending}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             type="email"
@@ -43,24 +87,29 @@ const SignCard = () => {
             required
           />
           <Input
-            disabled={false}
-            value={pwd}
-            onChange={(e) => setPwd(e.target.value)}
+            disabled={isPending}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             type="password"
             placeholder="Password"
             required
           />
           {signFlow === "signUp" ? (
             <Input
-              disabled={false}
-              value={confirmPwd}
-              onChange={(e) => setConfirmPwd(e.target.value)}
+              disabled={isPending}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               type="password"
               placeholder="Confirm password"
               required
             />
           ) : null}
-          <Button type="submit" className="w-full" disabled={false} size={"lg"}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending}
+            size={"lg"}
+          >
             Continue
           </Button>
         </form>
@@ -68,8 +117,8 @@ const SignCard = () => {
         <div className="flex flex-col gap-y-2">
           <Button
             className="w-full relative"
-            disabled={false}
-            onClick={() => {}}
+            disabled={isPending}
+            onClick={() => onSign("google")}
             variant={"outline"}
             size={"lg"}
           >
@@ -78,8 +127,8 @@ const SignCard = () => {
           </Button>
           <Button
             className="w-full relative"
-            disabled={false}
-            onClick={() => {}}
+            disabled={isPending}
+            onClick={() => onSign("github")}
             variant={"outline"}
             size={"lg"}
           >
