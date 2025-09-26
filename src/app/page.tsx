@@ -1,6 +1,6 @@
 "use client";
 
-import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 import UserButton from "@/features/components/user-button";
 import { useCreateWorkspaceModal } from "@/features/workspaces/store/useCreateWorkspaceModal";
 import useGetWorkspaces from "@/features/workspaces/api/useGetWorkspaces";

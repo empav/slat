@@ -1,4 +1,5 @@
 import useWorkspaceId from "@/app/hooks/useWorkspaceId";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { Button } from "@/components/ui/button";
 import useGetWorkspace from "@/features/workspaces/api/useGetWorkspace";
 import { InfoIcon, SearchIcon } from "lucide-react";
@@ -21,9 +22,10 @@ const Toolbar = () => {
           </span>
         </Button>
       </div>
-      <div className="ml-auto flex-1 items-center flex justify-end">
+      <div className="ml-auto flex-1 items-center flex justify-end gap-x-2">
+        <ThemeSwitcher />
         <Button variant={"transparent"} size={"iconSm"}>
-          <InfoIcon className="size-5 text-white" />
+          <InfoIcon className="size-5 text-background" />
         </Button>
       </div>
     </nav>

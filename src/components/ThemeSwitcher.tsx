@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Moon, Sun, Ship } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const themes = ["light", "dark", "ocean"] as const;
 type Theme = (typeof themes)[number];
 
-export function ThemeSwitcher() {
+const ThemeSwitcher = ({ className }: { className?: string }) => {
   const [theme, setTheme] = useState<Theme>("light");
 
   // Carica il tema salvato da localStorage
@@ -33,14 +34,31 @@ export function ThemeSwitcher() {
   };
 
   if (theme === "light") {
-    return <Moon className="size-6" onClick={cycleTheme} />;
+    return (
+      <Moon
+        className={cn("size-6 text-background", className)}
+        onClick={cycleTheme}
+      />
+    );
   }
   if (theme === "dark") {
-    return <Ship className="size-6" onClick={cycleTheme} />;
+    return (
+      <Ship
+        className={cn("size-6 text-background", className)}
+        onClick={cycleTheme}
+      />
+    );
   }
   if (theme === "ocean") {
-    return <Sun className="size-6" onClick={cycleTheme} />;
+    return (
+      <Sun
+        className={cn("size-6 text-background", className)}
+        onClick={cycleTheme}
+      />
+    );
   }
 
   return null;
-}
+};
+
+export default ThemeSwitcher;
