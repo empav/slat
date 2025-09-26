@@ -1,8 +1,21 @@
-interface Props {
-  params: Promise<{ workspaceId: string }>;
-}
+"use client";
 
-export default async function WorkspaceIdPage({ params }: Props) {
-  const ps = await params;
-  return <div>Test page {ps.workspaceId}</div>;
-}
+import useWorkspaceId from "@/app/hooks/useWorkspaceId";
+import useGetWorkspace from "@/features/workspaces/api/useGetWorkspace";
+
+const WorkspaceIdPage = () => {
+  const workspaceId = useWorkspaceId();
+  const { data, isLoading } = useGetWorkspace({ id: workspaceId });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!data) {
+    return <div>Workspace not found</div>;
+  }
+
+  return <div>Test page {workspaceId}</div>;
+};
+
+export default WorkspaceIdPage;
