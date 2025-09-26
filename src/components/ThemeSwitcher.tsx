@@ -36,7 +36,7 @@ const ThemeSwitcher = ({ className }: { className?: string }) => {
   if (theme === "light") {
     return (
       <Moon
-        className={cn("size-6 text-background", className)}
+        className={cn("size-6 text-foreground", className)}
         onClick={cycleTheme}
       />
     );
@@ -44,7 +44,7 @@ const ThemeSwitcher = ({ className }: { className?: string }) => {
   if (theme === "dark") {
     return (
       <Ship
-        className={cn("size-6 text-background", className)}
+        className={cn("size-6 text-foreground", className)}
         onClick={cycleTheme}
       />
     );
@@ -52,7 +52,7 @@ const ThemeSwitcher = ({ className }: { className?: string }) => {
   if (theme === "ocean") {
     return (
       <Sun
-        className={cn("size-6 text-background", className)}
+        className={cn("size-6 text-foreground", className)}
         onClick={cycleTheme}
       />
     );
