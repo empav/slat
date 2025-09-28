@@ -1,6 +1,11 @@
 import { v } from "convex/values";
-import { query } from "./_generated/server";
+import { query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { Id } from "./_generated/dataModel";
+
+const populateUsers = async (ctx: QueryCtx, id: Id<"users">) => {
+  return ctx.db.get(id);
+};
 
 export const current = query({
   args: {
@@ -25,5 +30,47 @@ export const current = query({
     }
 
     return member;
+  },
+});
+
+export const getMany = query({
+  args: {
+    workspaceId: v.id("workspaces"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      return null;
+    }
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("byUserIdAndWorkspaceId", (q) =>
+        q.eq("userId", userId).eq("workspaceId", args.workspaceId)
+      )
+      .unique();
+
+    if (!member) {
+      return [];
+    }
+
+    const data = await ctx.db
+      .query("members")
+      .withIndex("byWorkspaceId", (q) => q.eq("workspaceId", args.workspaceId))
+      .collect();
+
+    const members = [];
+    for (const m of data) {
+      const user = await populateUsers(ctx, m.userId);
+      if (user) {
+        members.push({
+          ...m,
+          user,
+        });
+      }
+    }
+
+    return members;
   },
 });

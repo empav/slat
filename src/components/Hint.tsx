@@ -24,11 +24,7 @@ const Hint = ({
     <TooltipProvider>
       <Tooltip delayDuration={50}>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent
-          side={side}
-          align={align}
-          className="bg-background text-foreground border border-foreground/5"
-        >
+        <TooltipContent side={side} align={align}>
           <p className="font-medium text-xs">{label}</p>
         </TooltipContent>
       </Tooltip>
