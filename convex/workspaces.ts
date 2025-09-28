@@ -10,6 +10,33 @@ const generateCode = () => {
   return code;
 };
 
+export const newJoinCode = mutation({
+  args: {
+    workspaceId: v.id("workspaces"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
+    const member = await ctx.db
+      .query("members")
+      .withIndex("byUserIdAndWorkspaceId", (q) =>
+        q.eq("userId", userId).eq("workspaceId", args.workspaceId)
+      )
+      .unique();
+
+    if (!member || member.role !== "admin") {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const joinCode = generateCode();
+    await ctx.db.patch(args.workspaceId, { joinCode });
+
+    return args.workspaceId;
+  },
+});
+
 export const removeOne = mutation({
   args: {
     id: v.id("workspaces"),
