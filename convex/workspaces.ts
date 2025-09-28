@@ -10,6 +10,71 @@ const generateCode = () => {
   return code;
 };
 
+export const removeOne = mutation({
+  args: {
+    id: v.id("workspaces"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("byUserIdAndWorkspaceId", (q) =>
+        q.eq("userId", userId).eq("workspaceId", args.id)
+      )
+      .unique();
+
+    if (!member || member.role !== "admin") {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const [members] = await Promise.all([
+      ctx.db
+        .query("members")
+        .withIndex("byWorkspaceId", (q) => q.eq("workspaceId", args.id))
+        .collect(),
+    ]);
+
+    for (const member of members) {
+      await ctx.db.delete(member._id);
+    }
+
+    await ctx.db.delete(args.id);
+
+    return args.id;
+  },
+});
+
+export const updateOne = mutation({
+  args: {
+    id: v.id("workspaces"),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("byUserIdAndWorkspaceId", (q) =>
+        q.eq("userId", userId).eq("workspaceId", args.id)
+      )
+      .unique();
+
+    if (!member || member.role !== "admin") {
+      throw new ConvexError("Not authenticated");
+    }
+    await ctx.db.patch(args.id, { name: args.name });
+
+    return args.id;
+  },
+});
+
 export const create = mutation({
   args: {
     name: v.string(),
