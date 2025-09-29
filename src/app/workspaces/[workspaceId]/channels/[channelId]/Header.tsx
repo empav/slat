@@ -85,87 +85,85 @@ const Header = ({ title }: { title: string }) => {
   };
 
   return (
-    <>
+    <div className="bg-background flex items-center px-4 border-b overflow-hidden">
       <ConfirmDialog />
-      <div className="bg-background flex items-center px-4 border-b overflow-hidden">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size={"sm"}
-              className="text-lg font-semibold px-2 overflow-hidden w-auto"
-            >
-              <span className="truncate"># {title}</span>
-              <FaChevronDown className="ml-2 size-2.5" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="p-0 bg-gray-50 overflow-hidden">
-            <DialogHeader className="p-4 border-b bg-background">
-              <DialogTitle># {title}</DialogTitle>
-            </DialogHeader>
-            <div className="px-4 pb-4 flex flex-col gap-y-2">
-              <Dialog open={isEditOpen} onOpenChange={onEditOpen}>
-                <DialogTrigger asChild>
-                  <div className="px-5 py-4 bg-background rounded-lg border cursor-pointer hover:bg-background/50">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold">Channel Name</p>
-                      {currentMember?.role === "admin" ? (
-                        <p className="text-sm text-foreground hover:underline font-semibold">
-                          Edit
-                        </p>
-                      ) : null}
-                    </div>
-                    <p className="text-sm"># {title}</p>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button
+            variant="ghost"
+            size={"sm"}
+            className="text-lg font-semibold px-2 overflow-hidden w-auto"
+          >
+            <span className="truncate"># {title}</span>
+            <FaChevronDown className="ml-2 size-2.5" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="p-0 bg-gray-50 overflow-hidden">
+          <DialogHeader className="p-4 border-b bg-background">
+            <DialogTitle># {title}</DialogTitle>
+          </DialogHeader>
+          <div className="px-4 pb-4 flex flex-col gap-y-2">
+            <Dialog open={isEditOpen} onOpenChange={onEditOpen}>
+              <DialogTrigger asChild>
+                <div className="px-5 py-4 bg-background rounded-lg border cursor-pointer hover:bg-background/50">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold">Channel Name</p>
+                    {currentMember?.role === "admin" ? (
+                      <p className="text-sm text-foreground hover:underline font-semibold">
+                        Edit
+                      </p>
+                    ) : null}
                   </div>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Rename Channel</DialogTitle>
-                  </DialogHeader>
-                  <form className="space-y-4" onSubmit={onSubmit}>
-                    <Input
-                      value={value}
-                      onChange={onChange}
+                  <p className="text-sm"># {title}</p>
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Rename Channel</DialogTitle>
+                </DialogHeader>
+                <form className="space-y-4" onSubmit={onSubmit}>
+                  <Input
+                    value={value}
+                    onChange={onChange}
+                    disabled={isUpdatePending}
+                    required
+                    autoFocus
+                    minLength={3}
+                    maxLength={80}
+                    placeholder="Channel Name"
+                  />
+                  <div className="flex justify-end gap-x-2">
+                    <Button
+                      variant={"outline"}
                       disabled={isUpdatePending}
-                      required
-                      autoFocus
-                      minLength={3}
-                      maxLength={80}
-                      placeholder="Channel Name"
-                    />
-                    <div className="flex justify-end gap-x-2">
-                      <Button
-                        variant={"outline"}
-                        disabled={isUpdatePending}
-                        type="button"
-                        onClick={() => setIsEditOpen(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button disabled={isUpdatePending} type="submit">
-                        Save
-                      </Button>
-                    </div>
-                  </form>
-                </DialogContent>
-              </Dialog>
-              {currentMember?.role === "admin" ? (
-                <button
-                  disabled={isRemovePending}
-                  type="button"
-                  aria-label="Delete Channel"
-                  onClick={onDelete}
-                  className="flex items-center gap-x-2 px-5 py-4 bg-background rounded-lg border text-red-600 hover:bg-red-600/20 cursor-pointer"
-                >
-                  <TrashIcon className="size-4" />
-                  <p className="text-sm font-semibold">Delete Channel</p>
-                </button>
-              ) : null}
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </>
+                      type="button"
+                      onClick={() => setIsEditOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button disabled={isUpdatePending} type="submit">
+                      Save
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+            {currentMember?.role === "admin" ? (
+              <button
+                disabled={isRemovePending}
+                type="button"
+                aria-label="Delete Channel"
+                onClick={onDelete}
+                className="flex items-center gap-x-2 px-5 py-4 bg-background rounded-lg border text-red-600 hover:bg-red-600/20 cursor-pointer"
+              >
+                <TrashIcon className="size-4" />
+                <p className="text-sm font-semibold">Delete Channel</p>
+              </button>
+            ) : null}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 export default Header;
