@@ -15,8 +15,10 @@ import WorkspaceSection from "./WorkspaceSection";
 import useGetMembers from "@/features/members/api/useGetMembers";
 import UserItem from "./UserItem";
 import { useCreateChannelModal } from "@/features/channels/store/useCreateChannelModal";
+import useChannelId from "@/hooks/useChannelId";
 
 const WorkspaceSidebar = () => {
+  const channelId = useChannelId();
   const workspaceId = useWorkspaceId();
   const [, setIsCreateChannelModalOpen] = useCreateChannelModal();
   const { data: member, isLoading: isLoadingMember } = useCurrentMember({
@@ -25,8 +27,9 @@ const WorkspaceSidebar = () => {
   const { data: workspace, isLoading: isLoadingWorkspace } = useGetWorkspace({
     id: workspaceId,
   });
-  const { data: channels, isLoading: isLoadingChannels } =
-    useGetChannels(workspaceId);
+  const { data: channels, isLoading: isLoadingChannels } = useGetChannels({
+    workspaceId,
+  });
 
   const { data: members, isLoading: isLoadingMembers } = useGetMembers({
     workspaceId,
@@ -80,6 +83,7 @@ const WorkspaceSidebar = () => {
             icon={HashIcon}
             id={item._id}
             className="ml-4"
+            variant={item._id === channelId ? "active" : "default"}
           />
         ))}
       </WorkspaceSection>
