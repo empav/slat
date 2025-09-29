@@ -33,7 +33,7 @@ const WorkspaceSwitcher = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="size-9 overflow-hidden bg-foreground/5 hover:bg-foreground/5 text-foreground font-semibold text-xl">
+        <Button className="size-9 overflow-hidden bg-sidebar-foreground/5 hover:bg-sidebar-foreground/5 text-sidebar-foreground font-semibold text-xl">
           {isWorkspaceLoading ? (
             <Loader className="size-5 animate-spin shrink-0" />
           ) : (
@@ -57,15 +57,15 @@ const WorkspaceSwitcher = () => {
             className="cursor-pointer capitalize overflow-hidden"
             onClick={() => router.push(`/workspaces/${ws._id}`)}
           >
-            <Button className="size-9 overflow-hidden bg-foreground hover:bg-foreground/80 text-background font-semibold text-xl">
+            <Button className="size-9 overflow-hidden bg-sidebar hover:bg-sidebar-foreground/80 text-sidebar-foreground font-semibold text-xl">
               {ws.name.charAt(0).toUpperCase()}
             </Button>
             <p className="truncate">{ws.name}</p>
           </DropdownMenuItem>
         ))}
         <DropdownMenuItem onClick={() => setIsOpen(true)}>
-          <div className="size-9 relative overflow-hidden bg-background text-foreground font-semibold text-lg rounded-md flex items-center justify-center mr-3">
-            <Plus />
+          <div className="size-9 relative overflow-hidden bg-sidebar text-sidebar-foreground font-semibold text-lg rounded-md flex items-center justify-center mr-3">
+            <Plus className="text-sidebar-foreground" />
           </div>
           Create a new Workspace
         </DropdownMenuItem>

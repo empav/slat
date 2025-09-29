@@ -16,11 +16,11 @@ const SidebarButton = ({ icon: Icon, label, isActive }: Props) => {
     <div className="flex flex-col items-center justify-center gap-y-0.5 cursor-pointer group">
       <Button
         variant={"transparent"}
-        className={cn("size-9 p-2", isActive && "bg-foreground/10")}
+        className={cn("size-9 p-2", isActive && "bg-sidebar-foreground/10")}
       >
-        <Icon className="size-6 text-foreground p-0.5 group-hover:scale-115 transition-all" />
+        <Icon className="size-6 text-sidebar-foreground p-0.5 group-hover:scale-115 transition-all" />
       </Button>
-      <span className="text-[11px] text-foreground">{label}</span>
+      <span className="text-[11px] text-sidebar-foreground">{label}</span>
     </div>
   );
 };

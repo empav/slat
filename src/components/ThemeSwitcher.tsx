@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Moon, Sun, Ship } from "lucide-react";
+import { Moon, Sun, SlackIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const themes = ["light", "dark", "ocean"] as const;
+const themes = ["light", "dark", "slack"] as const;
 type Theme = (typeof themes)[number];
 
 const ThemeSwitcher = ({ className }: { className?: string }) => {
@@ -36,23 +36,23 @@ const ThemeSwitcher = ({ className }: { className?: string }) => {
   if (theme === "light") {
     return (
       <Moon
-        className={cn("size-6 text-foreground", className)}
+        className={cn("size-6 text-sidebar-foreground", className)}
         onClick={cycleTheme}
       />
     );
   }
   if (theme === "dark") {
     return (
-      <Ship
-        className={cn("size-6 text-foreground", className)}
+      <SlackIcon
+        className={cn("size-6 text-sidebar-foreground", className)}
         onClick={cycleTheme}
       />
     );
   }
-  if (theme === "ocean") {
+  if (theme === "slack") {
     return (
       <Sun
-        className={cn("size-6 text-foreground", className)}
+        className={cn("size-6 text-sidebar-foreground", className)}
         onClick={cycleTheme}
       />
     );

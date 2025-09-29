@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { PiTextAa } from "react-icons/pi";
 import { ImageIcon, SendIcon, Smile } from "lucide-react";
 import Hint from "./Hint";
+import { cn } from "@/lib/utils";
 
 type EditorValue = {
   image: File | null;
@@ -191,11 +192,18 @@ const Editor = ({
           ) : null}
         </div>
       </div>
-      <div className="p-2 text-[10px] text-muted-foreground flex justify-end">
-        <p>
-          <strong>Shift + return</strong> to add a new line
-        </p>
-      </div>
+      {variant === "create" ? (
+        <div
+          className={cn(
+            "p-2 text-[10px] text-muted-foreground flex justify-end opacity-0 transition-opacity",
+            !isEmpty && "opacity-100"
+          )}
+        >
+          <p>
+            <strong>Shift + return</strong> to add a new line
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 };

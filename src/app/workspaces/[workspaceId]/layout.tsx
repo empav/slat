@@ -25,7 +25,7 @@ export default function Layout({
   return (
     <div className="h-full">
       <Toolbar />
-      <div className="flex h-[calc(100vh-48px)] mt-0.5">
+      <div className="flex h-[calc(100vh-48px)]">
         <Sidebar />
         <ResizablePanelGroup
           direction="horizontal"

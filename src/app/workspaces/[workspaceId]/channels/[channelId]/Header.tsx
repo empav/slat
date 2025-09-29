@@ -98,6 +98,9 @@ const Header = ({ title }: { title: string }) => {
             <FaChevronDown className="ml-2 size-2.5" />
           </Button>
         </DialogTrigger>
+        <span className="text-xs text-muted-foreground">
+          Description of the channel goes here
+        </span>
         <DialogContent className="p-0 bg-gray-50 overflow-hidden">
           <DialogHeader className="p-4 border-b bg-background">
             <DialogTitle># {title}</DialogTitle>
