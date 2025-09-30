@@ -6,6 +6,7 @@ import { PiTextAa } from "react-icons/pi";
 import { ImageIcon, SendIcon, Smile } from "lucide-react";
 import Hint from "./Hint";
 import { cn } from "@/lib/utils";
+import EmojiPopover from "./EmojiPopover";
 
 type EditorValue = {
   image: File | null;
@@ -117,6 +118,16 @@ const Editor = ({
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onEmojiSelect = (emoji: any) => {
+    if (!quillRef.current) return;
+
+    quillRef.current.insertText(
+      quillRef.current.getSelection()?.index || 0,
+      emoji.native
+    );
+  };
+
   const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
   return (
@@ -136,16 +147,11 @@ const Editor = ({
               <PiTextAa className="size-4" />
             </Button>
           </Hint>
-          <Hint label="Emojis">
-            <Button
-              disabled={false}
-              variant="ghost"
-              size="iconSm"
-              onClick={() => {}}
-            >
+          <EmojiPopover onEmojiSelect={onEmojiSelect} hint="Emoji">
+            <Button disabled={false} variant="ghost" size="iconSm">
               <Smile className="size-4" />
             </Button>
-          </Hint>
+          </EmojiPopover>
           {variant === "create" ? (
             <Hint label="Image">
               <Button
