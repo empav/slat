@@ -11,6 +11,8 @@ import useUpdateMessage from "@/features/messages/api/useUpdateMessage";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { EditorValue } from "./Editor";
+import useDeleteMessage from "@/features/messages/api/useDeleteMessage";
+import useConfirmDialog from "@/hooks/useConfirmDialog";
 
 const Editor = dynamic(() => import("./Editor"), { ssr: false });
 const MessageRenderer = dynamic(() => import("./MessageRenderer"), {
@@ -41,6 +43,12 @@ const Message = ({
   const creationTime = new Date(_creationTime);
   const { mutate: updateMessage, isPending: isUpdatingMessage } =
     useUpdateMessage();
+  const { mutate: deleteMessage, isPending: isDeletingMessage } =
+    useDeleteMessage();
+  const [ConfirmDialog, confirm] = useConfirmDialog(
+    "Are you sure?",
+    "Deleting a message cannot be undone."
+  );
 
   const onUpdateMessage = ({ body }: EditorValue) => {
     updateMessage(
@@ -57,32 +65,126 @@ const Message = ({
     );
   };
 
+  const onDeleteMessage = async () => {
+    const ok = await confirm();
+    if (!ok) return;
+
+    deleteMessage(
+      { id: _id },
+      {
+        onSuccess: () => {
+          toast.success("Message deleted");
+          setEditingId(null);
+        },
+        onError: () => {
+          toast.error("Failed to delete message");
+        },
+      }
+    );
+  };
+
   if (isCompact) {
     return (
+      <>
+        <ConfirmDialog />
+        <div
+          className={cn(
+            "flex flex-col gap-2 p-1.5 px-5 hover:bg-accent/80 hover:text-accent-foreground group relative",
+            isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]",
+            isDeletingMessage &&
+              "bg-rose-500/50 transform transition-all duration-300 scale-y-0 origin-bottom"
+          )}
+        >
+          <div className="flex items-start gap-2">
+            <Hint label={formatFullTime(creationTime)}>
+              <button className="text-xs text-foreground opacity-0 group-hover:opacity-100 w-[40px] leading-[22px] text-center">
+                {format(creationTime, "HH:mm")}
+              </button>
+            </Hint>
+            {isEditing ? (
+              <div className="size-full">
+                <Editor
+                  onSubmit={onUpdateMessage}
+                  disabled={isUpdatingMessage || isDeletingMessage}
+                  defaultValue={JSON.parse(body)}
+                  onCancel={() => setEditingId(null)}
+                  variant="update"
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col w-full">
+                <MessageRenderer value={body} />
+                <Thumbnail url={image} />
+                {updatedAt ? (
+                  <span className="text-xs text-muted-foreground/80">
+                    (edited)
+                  </span>
+                ) : null}
+              </div>
+            )}
+          </div>
+          {!isEditing ? (
+            <Toolbar
+              isAuthor={isAuthor}
+              isPending={isUpdatingMessage || isDeletingMessage}
+              onEdit={() => setEditingId(_id)}
+              onThread={() => {}}
+              onDelete={onDeleteMessage}
+              hideThreadButton={hideThreadButton}
+              onReactions={() => {}}
+            />
+          ) : null}
+        </div>
+      </>
+    );
+  }
+  return (
+    <>
+      <ConfirmDialog />
       <div
         className={cn(
           "flex flex-col gap-2 p-1.5 px-5 hover:bg-accent/80 hover:text-accent-foreground group relative",
-          isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]"
+          isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]",
+          isDeletingMessage &&
+            "bg-rose-500/50 transform transition-all duration-300 scale-y-0 origin-bottom"
         )}
       >
         <div className="flex items-start gap-2">
-          <Hint label={formatFullTime(creationTime)}>
-            <button className="text-xs text-foreground opacity-0 group-hover:opacity-100 w-[40px] leading-[22px] text-center">
-              {format(creationTime, "HH:mm")}
-            </button>
-          </Hint>
+          <button>
+            <Avatar className="rounded-md size-10 transition hover:opacity-75">
+              <AvatarImage
+                className="rounded-md"
+                src={user.image}
+                alt={user.name}
+              />
+              <AvatarFallback className="bg-primary text-white rounded-md">
+                {user.name!.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </button>
           {isEditing ? (
-            <div className="size-full">
+            <div className="w-full h-full">
               <Editor
                 onSubmit={onUpdateMessage}
-                disabled={isUpdatingMessage}
+                disabled={isUpdatingMessage || isDeletingMessage}
                 defaultValue={JSON.parse(body)}
                 onCancel={() => setEditingId(null)}
                 variant="update"
               />
             </div>
           ) : (
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full overflow-hidden">
+              <div className="text-sm">
+                <button className="font-bold text-foreground hover:underline">
+                  {user.name}
+                </button>
+                <span className="">{"  "}</span>
+                <Hint label={formatFullTime(creationTime)}>
+                  <button className="text-xs text-muted-foreground hover:underline">
+                    {format(creationTime, "h:mm a")}
+                  </button>
+                </Hint>
+              </div>
               <MessageRenderer value={body} />
               <Thumbnail url={image} />
               {updatedAt ? (
@@ -96,80 +198,16 @@ const Message = ({
         {!isEditing ? (
           <Toolbar
             isAuthor={isAuthor}
-            isPending={false}
+            isPending={isUpdatingMessage || isDeletingMessage}
             onEdit={() => setEditingId(_id)}
             onThread={() => {}}
-            onDelete={() => {}}
+            onDelete={onDeleteMessage}
             hideThreadButton={hideThreadButton}
             onReactions={() => {}}
           />
         ) : null}
       </div>
-    );
-  }
-  return (
-    <div
-      className={cn(
-        "flex flex-col gap-2 p-1.5 px-5 hover:bg-accent/80 hover:text-accent-foreground group relative",
-        isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]"
-      )}
-    >
-      <div className="flex items-start gap-2">
-        <button>
-          <Avatar className="rounded-md size-10 transition hover:opacity-75">
-            <AvatarImage
-              className="rounded-md"
-              src={user.image}
-              alt={user.name}
-            />
-            <AvatarFallback className="bg-primary text-white rounded-md">
-              {user.name!.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-        </button>
-        {isEditing ? (
-          <div className="w-full h-full">
-            <Editor
-              onSubmit={onUpdateMessage}
-              disabled={isUpdatingMessage}
-              defaultValue={JSON.parse(body)}
-              onCancel={() => setEditingId(null)}
-              variant="update"
-            />
-          </div>
-        ) : (
-          <div className="flex flex-col w-full overflow-hidden">
-            <div className="text-sm">
-              <button className="font-bold text-foreground hover:underline">
-                {user.name}
-              </button>
-              <span className="">{"  "}</span>
-              <Hint label={formatFullTime(creationTime)}>
-                <button className="text-xs text-muted-foreground hover:underline">
-                  {format(creationTime, "h:mm a")}
-                </button>
-              </Hint>
-            </div>
-            <MessageRenderer value={body} />
-            <Thumbnail url={image} />
-            {updatedAt ? (
-              <span className="text-xs text-muted-foreground/80">(edited)</span>
-            ) : null}
-          </div>
-        )}
-      </div>
-      {!isEditing ? (
-        <Toolbar
-          isAuthor={isAuthor}
-          isPending={isUpdatingMessage}
-          onEdit={() => setEditingId(_id)}
-          onThread={() => {}}
-          onDelete={() => {}}
-          hideThreadButton={hideThreadButton}
-          onReactions={() => {}}
-        />
-      ) : null}
-    </div>
+    </>
   );
 };
 export default Message;
