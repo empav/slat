@@ -69,6 +69,32 @@ const getMember = async (
   return member;
 };
 
+export const updateOne = mutation({
+  args: {
+    id: v.id("messages"),
+    body: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
+    const message = await ctx.db.get(args.id);
+    if (!message) {
+      throw new ConvexError("Message not found");
+    }
+    const member = await getMember(ctx, userId, message.workspaceId);
+    if (!member || member._id !== message.memberId) {
+      throw new ConvexError("Not authenticated");
+    }
+    await ctx.db.patch(args.id, {
+      body: args.body,
+      updatedAt: Date.now(),
+    });
+    return args.id;
+  },
+});
+
 export const create = mutation({
   args: {
     body: v.string(),

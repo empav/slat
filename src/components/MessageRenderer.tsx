@@ -17,6 +17,7 @@ const Renderer = ({ value }: { value: string }) => {
     let contents;
     try {
       contents = JSON.parse(JSON.parse(value));
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error: unknown) {
       contents = JSON.parse(value);
     }

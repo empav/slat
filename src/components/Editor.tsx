@@ -1,4 +1,4 @@
-import Quill, { Delta, Op, QuillOptions } from "quill";
+import Quill, { QuillOptions } from "quill";
 import "quill/dist/quill.snow.css";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
@@ -8,8 +8,9 @@ import Hint from "./Hint";
 import { cn } from "@/lib/utils";
 import EmojiPopover from "./EmojiPopover";
 import Image from "next/image";
+import { Delta, Op } from "quill/core";
 
-type EditorValue = {
+export type EditorValue = {
   image: File | null;
   body: string;
 };
