@@ -12,7 +12,7 @@ const sidebarItemVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
+          "bg-background text-foreground hover:bg-accent/80 hover:text-accent-foreground",
         active: "bg-foreground/10 text-foreground hover:bg-foreground/13",
       },
     },
