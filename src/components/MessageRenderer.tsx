@@ -18,7 +18,6 @@ const Renderer = ({ value }: { value: string }) => {
     try {
       contents = JSON.parse(JSON.parse(value));
     } catch (error: unknown) {
-      console.error("Error parsing message content:", error);
       contents = JSON.parse(value);
     }
 

@@ -16,7 +16,7 @@ type Props = {
   onEmojiSelect: (emoji: any) => void;
 };
 
-const EmojiPopover = ({ children, hint = "Emoji", onEmojiSelect }: Props) => {
+const EmojiPopover = ({ children, hint, onEmojiSelect }: Props) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
@@ -33,18 +33,22 @@ const EmojiPopover = ({ children, hint = "Emoji", onEmojiSelect }: Props) => {
   return (
     <TooltipProvider>
       <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-        <Tooltip
-          open={isTooltipOpen}
-          onOpenChange={setIsTooltipOpen}
-          delayDuration={50}
-        >
-          <PopoverTrigger asChild>
-            <TooltipTrigger asChild>{children}</TooltipTrigger>
-          </PopoverTrigger>
-          <TooltipContent className="bg-background text-foreground border border-foreground/10">
-            <p className="font-medium text-xs">{hint}</p>
-          </TooltipContent>
-        </Tooltip>
+        {hint ? (
+          <Tooltip
+            open={isTooltipOpen}
+            onOpenChange={setIsTooltipOpen}
+            delayDuration={50}
+          >
+            <PopoverTrigger asChild>
+              <TooltipTrigger asChild>{children}</TooltipTrigger>
+            </PopoverTrigger>
+            <TooltipContent className="bg-background text-foreground border border-foreground/10">
+              <p className="font-medium text-xs">{hint}</p>
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <PopoverTrigger asChild>{children}</PopoverTrigger>
+        )}
         <PopoverContent className="p-0 w-full shadow-none border-none">
           <Picker data={data} onEmojiSelect={onSelect} />
         </PopoverContent>

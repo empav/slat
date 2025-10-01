@@ -6,6 +6,7 @@ import { format, isToday, isYesterday } from "date-fns";
 import Hint from "./Hint";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Thumbnail from "./Thumbnail";
+import Toolbar from "./Toolbar";
 
 const MessageRenderer = dynamic(() => import("./MessageRenderer"), {
   ssr: false,
@@ -25,7 +26,7 @@ const formatFullTime = (date: Date) => {
 };
 
 const Message = ({
-  message: { image, body, _creationTime, user, updatedAt },
+  message: { _id, image, body, _creationTime, user, updatedAt },
   isAuthor,
   isEditing,
   setEditingId,
@@ -53,43 +54,52 @@ const Message = ({
       </div>
     );
   }
-  if (!isCompact) {
-    return (
-      <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-accent/80 hover:text-accent-foreground relative">
-        <div className="flex items-start gap-2">
-          <button>
-            <Avatar className="rounded-md size-10 transition hover:opacity-75">
-              <AvatarImage
-                className="rounded-md"
-                src={user.image}
-                alt={user.name}
-              />
-              <AvatarFallback className="bg-primary text-white rounded-md">
-                {user.name!.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          </button>
-          <div className="flex flex-col w-full overflow-hidden">
-            <div className="text-sm">
-              <button className="font-bold text-foreground hover:underline">
-                {user.name}
+  return (
+    <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-accent/80 hover:text-accent-foreground group relative">
+      <div className="flex items-start gap-2">
+        <button>
+          <Avatar className="rounded-md size-10 transition hover:opacity-75">
+            <AvatarImage
+              className="rounded-md"
+              src={user.image}
+              alt={user.name}
+            />
+            <AvatarFallback className="bg-primary text-white rounded-md">
+              {user.name!.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </button>
+        <div className="flex flex-col w-full overflow-hidden">
+          <div className="text-sm">
+            <button className="font-bold text-foreground hover:underline">
+              {user.name}
+            </button>
+            <span className="">{"  "}</span>
+            <Hint label={formatFullTime(creationTime)}>
+              <button className="text-xs text-muted-foreground hover:underline">
+                {format(creationTime, "h:mm a")}
               </button>
-              <span className="">{"  "}</span>
-              <Hint label={formatFullTime(creationTime)}>
-                <button className="text-xs text-muted-foreground hover:underline">
-                  {format(creationTime, "h:mm a")}
-                </button>
-              </Hint>
-            </div>
-            <MessageRenderer value={body} />
-            <Thumbnail url={image} />
-            {updatedAt ? (
-              <span className="text-xs text-muted-foreground/80">(edited)</span>
-            ) : null}
+            </Hint>
           </div>
+          <MessageRenderer value={body} />
+          <Thumbnail url={image} />
+          {updatedAt ? (
+            <span className="text-xs text-muted-foreground/80">(edited)</span>
+          ) : null}
         </div>
       </div>
-    );
-  }
+      {!isEditing ? (
+        <Toolbar
+          isAuthor={isAuthor}
+          isPending={false}
+          onEdit={() => setEditingId(_id)}
+          onThread={() => {}}
+          onDelete={() => {}}
+          hideThreadButton={hideThreadButton}
+          onReactions={() => {}}
+        />
+      ) : null}
+    </div>
+  );
 };
 export default Message;
