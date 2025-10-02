@@ -7,6 +7,7 @@ import { Id } from "../../convex/_generated/dataModel";
 import useWorkspaceId from "@/app/hooks/useWorkspaceId";
 import useCurrentMember from "@/features/members/api/useCurrentMember";
 import { Loader } from "lucide-react";
+import ConversationHero from "./ConversationHero";
 
 type Props = {
   memberName?: string;
@@ -37,6 +38,8 @@ const MessageList = ({
   isLoadingMore,
   canLoadMore,
   variant = "channel",
+  memberImage,
+  memberName,
 }: Props) => {
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
 
@@ -76,6 +79,9 @@ const MessageList = ({
     <>
       {variant === "channel" && channelName && channelCreationTime ? (
         <ChannelHero name={channelName} creationTime={channelCreationTime} />
+      ) : null}
+      {variant === "conversation" ? (
+        <ConversationHero name={memberName} image={memberImage} />
       ) : null}
       <div className="flex flex-1 flex-col-reverse pb-4 overflow-y-auto messages-scrollbar">
         {Object.entries(messagesByDate).map(([dateKey, messages]) => (
