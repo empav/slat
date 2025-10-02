@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils";
 import { EditorValue } from "./Editor";
 import useDeleteMessage from "@/features/messages/api/useDeleteMessage";
 import useConfirmDialog from "@/hooks/useConfirmDialog";
+import useToggleReaction from "@/features/reactions/api/useToggleReaction";
+import Reactions from "./Reactions";
 
 const Editor = dynamic(() => import("./Editor"), { ssr: false });
 const MessageRenderer = dynamic(() => import("./MessageRenderer"), {
@@ -33,7 +35,7 @@ const formatFullTime = (date: Date) => {
 };
 
 const Message = ({
-  message: { _id, image, body, _creationTime, user, updatedAt },
+  message: { _id, image, body, _creationTime, user, updatedAt, reactions },
   isAuthor,
   isEditing,
   setEditingId,
@@ -41,6 +43,8 @@ const Message = ({
   hideThreadButton,
 }: Props) => {
   const creationTime = new Date(_creationTime);
+  const { mutate: toggleReaction, isPending: isTogglingReaction } =
+    useToggleReaction();
   const { mutate: updateMessage, isPending: isUpdatingMessage } =
     useUpdateMessage();
   const { mutate: deleteMessage, isPending: isDeletingMessage } =
@@ -49,6 +53,25 @@ const Message = ({
     "Are you sure?",
     "Deleting a message cannot be undone."
   );
+
+  const onReactions = (emoji: unknown) => {
+    const value =
+      typeof emoji === "object" && emoji !== null && "native" in emoji
+        ? (emoji.native as string)
+        : typeof emoji === "string"
+          ? emoji
+          : "";
+    if (value) {
+      toggleReaction(
+        { messageId: _id, value },
+        {
+          onError: () => {
+            toast.error("Failed to toggle reaction");
+          },
+        }
+      );
+    }
+  };
 
   const onUpdateMessage = ({ body }: EditorValue) => {
     updateMessage(
@@ -120,18 +143,21 @@ const Message = ({
                     (edited)
                   </span>
                 ) : null}
+                <Reactions data={reactions} onChange={onReactions} />
               </div>
             )}
           </div>
           {!isEditing ? (
             <Toolbar
               isAuthor={isAuthor}
-              isPending={isUpdatingMessage || isDeletingMessage}
+              isPending={
+                isUpdatingMessage || isDeletingMessage || isTogglingReaction
+              }
               onEdit={() => setEditingId(_id)}
               onThread={() => {}}
               onDelete={onDeleteMessage}
               hideThreadButton={hideThreadButton}
-              onReactions={() => {}}
+              onReactions={onReactions}
             />
           ) : null}
         </div>
@@ -166,7 +192,9 @@ const Message = ({
             <div className="w-full h-full">
               <Editor
                 onSubmit={onUpdateMessage}
-                disabled={isUpdatingMessage || isDeletingMessage}
+                disabled={
+                  isUpdatingMessage || isDeletingMessage || isTogglingReaction
+                }
                 defaultValue={JSON.parse(body)}
                 onCancel={() => setEditingId(null)}
                 variant="update"
@@ -192,18 +220,21 @@ const Message = ({
                   (edited)
                 </span>
               ) : null}
+              <Reactions data={reactions} onChange={onReactions} />
             </div>
           )}
         </div>
         {!isEditing ? (
           <Toolbar
             isAuthor={isAuthor}
-            isPending={isUpdatingMessage || isDeletingMessage}
+            isPending={
+              isUpdatingMessage || isDeletingMessage || isTogglingReaction
+            }
             onEdit={() => setEditingId(_id)}
             onThread={() => {}}
             onDelete={onDeleteMessage}
             hideThreadButton={hideThreadButton}
-            onReactions={() => {}}
+            onReactions={onReactions}
           />
         ) : null}
       </div>

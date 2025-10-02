@@ -26,7 +26,7 @@ const Toolbar = ({
     <div className="absolute top-0 right-5">
       <div className="group-hover:opacity-100 opacity-0 transition-opacity border bg-foreground rounded-md shadow-sm">
         <EmojiPopover onEmojiSelect={(emoji) => onReactions(emoji)}>
-          <Button size="iconSm" disabled={isPending} onClick={onReactions}>
+          <Button size="iconSm" disabled={isPending}>
             <Smile className="size-4" />
           </Button>
         </EmojiPopover>
