@@ -5,6 +5,7 @@ import { AlertTriangle, Loader, MailIcon, XIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
 
 const Profile = ({
   memberId,
@@ -50,6 +51,13 @@ const Profile = ({
           </div>
           <div className="flex flex-col p-4">
             <p className="text-xl font-bold">{member.user.name} </p>
+            <p className="text-sm text-muted-foreground">
+              {member.isOnline
+                ? "Online"
+                : member.lastSeen
+                  ? `Last seen ${formatDistanceToNow(member.lastSeen, { addSuffix: true })}`
+                  : "Offline"}
+            </p>
           </div>
           <Separator className="my-2" />
           <div className="flex flex-col p-4">

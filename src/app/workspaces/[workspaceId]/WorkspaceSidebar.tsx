@@ -95,6 +95,7 @@ const WorkspaceSidebar = () => {
             key={item._id}
             image={item.user.image}
             label={item.user.name}
+            isOnline={item.isOnline}
             id={item._id}
             className="ml-3"
             variant={item._id === memberId ? "active" : "default"}

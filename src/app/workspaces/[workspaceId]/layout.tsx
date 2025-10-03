@@ -14,6 +14,12 @@ import usePanel from "@/hooks/usePanel";
 import { Id } from "../../../../convex/_generated/dataModel";
 import Thread from "@/features/messages/components/Thread";
 import Profile from "@/features/members/components/Profile";
+import { useUpdateLastSeen } from "@/features/members/api/useUpdateLastSeen";
+import { useEffect, useState } from "react";
+import useCurrentMember from "@/features/members/api/useCurrentMember";
+import useWorkspaceId from "@/app/hooks/useWorkspaceId";
+
+const POLLING_LAST_SEEN = 15000; // 15s
 
 export default function Layout({
   children,
@@ -21,7 +27,26 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   const { data: user } = useCurrentUser();
+  const workspaceId = useWorkspaceId();
+  const { data: member } = useCurrentMember({
+    workspaceId,
+  });
+  const { mutate: updateLastSeen } = useUpdateLastSeen();
   const { parentMessageId, onClose, profileMemberId } = usePanel();
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    if (!member || !workspaceId) return;
+    if (!mounted) {
+      updateLastSeen({ memberId: member._id, workspaceId });
+      setMounted(true);
+    }
+    const interval = setInterval(() => {
+      updateLastSeen({ memberId: member._id, workspaceId });
+    }, POLLING_LAST_SEEN);
+    return () => clearInterval(interval);
+  }, [updateLastSeen, member, workspaceId, mounted]);
 
   if (!user) {
     return <Loader />;

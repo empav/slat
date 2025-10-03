@@ -28,12 +28,14 @@ const UserItem = ({
   id,
   variant,
   className,
+  isOnline,
 }: {
   id: Id<"members">;
   label?: string;
   image?: string;
   variant?: VariantProps<typeof userItemVariants>["variant"];
   className?: string;
+  isOnline: boolean;
 }) => {
   const wId = useWorkspaceId();
   return (
@@ -45,7 +47,12 @@ const UserItem = ({
       className={cn(userItemVariants({ variant }), className)}
     >
       <Link href={`/workspaces/${wId}/members/${id}`}>
-        <Avatar className="size-6 rounded-md mr-1">
+        <Avatar
+          className={cn(
+            "size-5 rounded-md mr-1 relative outline-2",
+            isOnline ? " outline-green-600" : "outline-red-600"
+          )}
+        >
           <AvatarImage src={image} alt={label} className="rounded-md" />
           <AvatarFallback className="rounded-md bg-sky-600 text-white text-xs">
             {label?.charAt(0).toUpperCase()}

@@ -12,6 +12,8 @@ import ConversationHero from "./ConversationHero";
 type Props = {
   memberName?: string;
   memberImage?: string;
+  memberLastSeen?: number;
+  memberIsOnline?: boolean;
   channelName?: string;
   channelCreationTime?: number;
   variant?: "channel" | "thread" | "conversation";
@@ -40,6 +42,8 @@ const MessageList = ({
   variant = "channel",
   memberImage,
   memberName,
+  memberIsOnline = false,
+  memberLastSeen,
 }: Props) => {
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
 
@@ -81,7 +85,12 @@ const MessageList = ({
         <ChannelHero name={channelName} creationTime={channelCreationTime} />
       ) : null}
       {variant === "conversation" ? (
-        <ConversationHero name={memberName} image={memberImage} />
+        <ConversationHero
+          name={memberName}
+          image={memberImage}
+          lastSeen={memberLastSeen}
+          isOnline={memberIsOnline}
+        />
       ) : null}
       <div className="flex flex-1 flex-col-reverse pb-4 overflow-y-auto messages-scrollbar">
         {Object.entries(messagesByDate).map(([dateKey, messages]) => (

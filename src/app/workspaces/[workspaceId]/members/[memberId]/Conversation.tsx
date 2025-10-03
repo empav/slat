@@ -39,6 +39,8 @@ const Conversation = ({ id }: { id: Id<"conversations"> }) => {
         variant="conversation"
         memberImage={member?.user.image}
         memberName={member?.user.name}
+        memberIsOnline={!!member?.isOnline}
+        memberLastSeen={member?.lastSeen}
         isLoadingMore={status === "LoadingMore"}
         canLoadMore={status === "CanLoadMore"}
       />

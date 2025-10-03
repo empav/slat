@@ -1,11 +1,16 @@
+import { formatDistanceToNow } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const ConversationHero = ({
   name = "Member",
   image,
+  lastSeen,
+  isOnline,
 }: {
   name?: string;
   image?: string;
+  lastSeen?: number;
+  isOnline: boolean;
 }) => {
   return (
     <div className="mt-[50px] mx-5">
@@ -16,7 +21,16 @@ const ConversationHero = ({
             {name?.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <p className="text-2xl font-bold">{name}</p>
+        <div className="flex flex-col">
+          <p className="text-2xl font-bold">{name}</p>
+          <p className="text-sm text-slate-500">
+            {isOnline
+              ? "Online"
+              : lastSeen
+                ? `Last seen ${formatDistanceToNow(lastSeen, { addSuffix: true })}`
+                : "Offline"}
+          </p>
+        </div>
       </div>
       <p className="font-normal text-slate-800 mb-4">
         This conversation is just between you and <strong>{name}</strong>
