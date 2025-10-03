@@ -17,6 +17,7 @@ import useToggleReaction from "@/features/reactions/api/useToggleReaction";
 import Reactions from "./Reactions";
 import usePanel from "@/hooks/usePanel";
 import { GetMessageReturnType } from "@/features/messages/api/useGetMessage";
+import ThreadBar from "./ThreadBar";
 
 const Editor = dynamic(() => import("./Editor"), { ssr: false });
 const MessageRenderer = dynamic(() => import("./MessageRenderer"), {
@@ -37,7 +38,19 @@ const formatFullTime = (date: Date) => {
 };
 
 const Message = ({
-  message: { _id, image, body, _creationTime, user, updatedAt, reactions },
+  message: {
+    _id,
+    image,
+    body,
+    _creationTime,
+    user,
+    updatedAt,
+    reactions,
+    threadCount,
+    threadImage,
+    threadTimestamp,
+    threadName,
+  },
   isAuthor,
   isEditing,
   setEditingId,
@@ -150,6 +163,13 @@ const Message = ({
                   </span>
                 ) : null}
                 <Reactions data={reactions} onChange={onReactions} />
+                <ThreadBar
+                  count={threadCount}
+                  image={threadImage}
+                  name={threadName}
+                  timestamp={threadTimestamp}
+                  onClick={() => onOpenMessage(_id)}
+                />
               </div>
             )}
           </div>
@@ -189,7 +209,7 @@ const Message = ({
                 src={user.image}
                 alt={user.name}
               />
-              <AvatarFallback className="bg-primary text-white rounded-md">
+              <AvatarFallback className="bg-sky-600 text-white rounded-md">
                 {user.name!.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -227,6 +247,13 @@ const Message = ({
                 </span>
               ) : null}
               <Reactions data={reactions} onChange={onReactions} />
+              <ThreadBar
+                count={threadCount}
+                image={threadImage}
+                timestamp={threadTimestamp}
+                name={threadName}
+                onClick={() => onOpenMessage(_id)}
+              />
             </div>
           )}
         </div>
