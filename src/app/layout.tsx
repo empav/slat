@@ -6,6 +6,7 @@ import Modals from "@/components/modals";
 import "./globals.css";
 import { Toaster } from "sonner";
 import JotaiProvider from "@/components/JotaiProvider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,9 +28,11 @@ export default function RootLayout({
         <body className={inter.className}>
           <ConvexClientProvider>
             <JotaiProvider>
-              <Toaster position="top-right" />
-              <Modals />
-              {children}
+              <NuqsAdapter>
+                <Toaster position="top-right" />
+                <Modals />
+                {children}
+              </NuqsAdapter>
             </JotaiProvider>
           </ConvexClientProvider>
         </body>

@@ -15,6 +15,8 @@ import useDeleteMessage from "@/features/messages/api/useDeleteMessage";
 import useConfirmDialog from "@/hooks/useConfirmDialog";
 import useToggleReaction from "@/features/reactions/api/useToggleReaction";
 import Reactions from "./Reactions";
+import usePanel from "@/hooks/usePanel";
+import { GetMessageReturnType } from "@/features/messages/api/useGetMessage";
 
 const Editor = dynamic(() => import("./Editor"), { ssr: false });
 const MessageRenderer = dynamic(() => import("./MessageRenderer"), {
@@ -22,7 +24,7 @@ const MessageRenderer = dynamic(() => import("./MessageRenderer"), {
 });
 
 type Props = {
-  message: GetMessagesReturnType[number];
+  message: GetMessagesReturnType[number] | GetMessageReturnType;
   isAuthor: boolean;
   isEditing: boolean;
   setEditingId: (id: Id<"messages"> | null) => void;
@@ -53,6 +55,7 @@ const Message = ({
     "Are you sure?",
     "Deleting a message cannot be undone."
   );
+  const { parentMessageId, onOpenMessage, onClose } = usePanel();
 
   const onReactions = (emoji: unknown) => {
     const value =
@@ -98,6 +101,9 @@ const Message = ({
         onSuccess: () => {
           toast.success("Message deleted");
           setEditingId(null);
+          if (parentMessageId === _id) {
+            onClose();
+          }
         },
         onError: () => {
           toast.error("Failed to delete message");
@@ -154,7 +160,7 @@ const Message = ({
                 isUpdatingMessage || isDeletingMessage || isTogglingReaction
               }
               onEdit={() => setEditingId(_id)}
-              onThread={() => {}}
+              onThread={() => onOpenMessage(_id)}
               onDelete={onDeleteMessage}
               hideThreadButton={hideThreadButton}
               onReactions={onReactions}
@@ -231,7 +237,7 @@ const Message = ({
               isUpdatingMessage || isDeletingMessage || isTogglingReaction
             }
             onEdit={() => setEditingId(_id)}
-            onThread={() => {}}
+            onThread={() => onOpenMessage(_id)}
             onDelete={onDeleteMessage}
             hideThreadButton={hideThreadButton}
             onReactions={onReactions}
