@@ -21,14 +21,14 @@ type Props = {
   canLoadMore: boolean;
 };
 
-const formatDateLabel = (dateString: string) => {
+export const formatDateLabel = (dateString: string) => {
   const date = new Date(dateString);
   if (isToday(date)) return "Today";
   if (isYesterday(date)) return "Yesterday";
   return format(date, "EEEE, MMMM d");
 };
 
-const TIME_THRESHOLD = 5; // 5 minutes
+export const TIME_THRESHOLD = 5; // 5 minutes
 
 const MessageList = ({
   channelName,
