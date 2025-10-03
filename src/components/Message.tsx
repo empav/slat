@@ -50,6 +50,7 @@ const Message = ({
     threadImage,
     threadTimestamp,
     threadName,
+    memberId,
   },
   isAuthor,
   isEditing,
@@ -68,7 +69,7 @@ const Message = ({
     "Are you sure?",
     "Deleting a message cannot be undone."
   );
-  const { parentMessageId, onOpenMessage, onClose } = usePanel();
+  const { parentMessageId, onOpenMessage, onOpenProfile, onClose } = usePanel();
 
   const onReactions = (emoji: unknown) => {
     const value =
@@ -202,7 +203,7 @@ const Message = ({
         )}
       >
         <div className="flex items-start gap-2">
-          <button>
+          <button onClick={() => onOpenProfile(memberId)}>
             <Avatar className="rounded-md size-10 transition hover:opacity-75">
               <AvatarImage
                 className="rounded-md"
@@ -229,7 +230,10 @@ const Message = ({
           ) : (
             <div className="flex flex-col w-full overflow-hidden">
               <div className="text-sm">
-                <button className="font-bold text-foreground hover:underline">
+                <button
+                  className="font-bold text-foreground hover:underline"
+                  onClick={() => onOpenProfile(memberId)}
+                >
                   {user.name}
                 </button>
                 <span className="">{"  "}</span>

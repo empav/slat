@@ -13,6 +13,7 @@ import WorkspaceSidebar from "./WorkspaceSidebar";
 import usePanel from "@/hooks/usePanel";
 import { Id } from "../../../../convex/_generated/dataModel";
 import Thread from "@/features/messages/components/Thread";
+import Profile from "@/features/members/components/Profile";
 
 export default function Layout({
   children,
@@ -20,13 +21,13 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   const { data: user } = useCurrentUser();
-  const { parentMessageId, onClose } = usePanel();
+  const { parentMessageId, onClose, profileMemberId } = usePanel();
 
   if (!user) {
     return <Loader />;
   }
 
-  const showPanel = !!parentMessageId;
+  const showPanel = !!parentMessageId || !!profileMemberId;
 
   return (
     <div className="h-full">
@@ -49,6 +50,11 @@ export default function Layout({
                 {parentMessageId ? (
                   <Thread
                     messageId={parentMessageId as Id<"messages">}
+                    onClose={onClose}
+                  />
+                ) : profileMemberId ? (
+                  <Profile
+                    memberId={profileMemberId as Id<"members">}
                     onClose={onClose}
                   />
                 ) : (

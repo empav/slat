@@ -45,7 +45,7 @@ const UserItem = ({
       className={cn(userItemVariants({ variant }), className)}
     >
       <Link href={`/workspaces/${wId}/members/${id}`}>
-        <Avatar className="size-5 rounded-md mr-1">
+        <Avatar className="size-6 rounded-md mr-1">
           <AvatarImage src={image} alt={label} className="rounded-md" />
           <AvatarFallback className="rounded-md bg-sky-600 text-white text-xs">
             {label?.charAt(0).toUpperCase()}
