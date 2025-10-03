@@ -155,6 +155,15 @@ export const removeOne = mutation({
       throw new ConvexError("Not authenticated");
     }
 
+    const messages = await ctx.db
+      .query("messages")
+      .withIndex("byChannelId", (q) => q.eq("channelId", args.id))
+      .collect();
+
+    for (const message of messages) {
+      await ctx.db.delete(message._id);
+    }
+
     await ctx.db.delete(args.id);
 
     return args.id;

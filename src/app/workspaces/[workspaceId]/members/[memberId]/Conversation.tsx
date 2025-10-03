@@ -6,8 +6,10 @@ import { Loader } from "lucide-react";
 import Header from "./Header";
 import ChatInput from "./ChatInput";
 import MessageList from "@/components/MessageList";
+import usePanel from "@/hooks/usePanel";
 
 const Conversation = ({ id }: { id: Id<"conversations"> }) => {
+  const { onOpenProfile } = usePanel();
   const memberId = useMemberId();
   const { data: member, isLoading: isMemberLoading } = useGetMember({
     memberId,
@@ -29,7 +31,7 @@ const Conversation = ({ id }: { id: Id<"conversations"> }) => {
       <Header
         memberName={member?.user.name}
         memberImage={member?.user.image}
-        onClick={() => {}}
+        onClick={() => onOpenProfile(memberId)}
       />
       <MessageList
         data={results}
