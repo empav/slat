@@ -3,6 +3,7 @@ import { mutation, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Doc, Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
+import { isOnline } from "./members";
 
 const populateUser = (ctx: QueryCtx, userId: Id<"users">) => {
   return ctx.db.get(userId);
@@ -155,6 +156,24 @@ export const create = mutation({
       conversationId: _conversationId,
       parentMessageId: args.parentMessageId,
     });
+
+    const conversation = await ctx.db.get(_conversationId!);
+    if (!conversation) {
+      return messageId;
+    }
+
+    const memberTo = await ctx.db.get(conversation.memberOneId);
+    if (!memberTo) {
+      return messageId;
+    }
+
+    if (!isOnline(memberTo.lastSeen)) {
+      await ctx.db.insert("notifications", {
+        memberId: memberTo._id,
+        createdAt: Date.now(),
+        sent: false,
+      });
+    }
 
     return messageId;
   },

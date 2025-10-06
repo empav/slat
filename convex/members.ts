@@ -5,7 +5,7 @@ import { Id } from "./_generated/dataModel";
 
 const INTERVAL_LAST_SEEN = 30000;
 
-const isOnline = (lastSeen: number | undefined) => {
+export const isOnline = (lastSeen: number | undefined) => {
   return lastSeen ? lastSeen > Date.now() - INTERVAL_LAST_SEEN : false;
 };
 
@@ -131,8 +131,6 @@ export const updateLastSeen = mutation({
     if (!userId) {
       throw new ConvexError("Not authenticated");
     }
-
-    console.log("Updating last seen for member", args.memberId);
 
     const member = await ctx.db
       .query("members")

@@ -61,6 +61,12 @@ const schema = defineSchema({
     .index("byWorkspaceId", ["workspaceId"])
     .index("byMessageId", ["messageId"])
     .index("byMemberId", ["memberId"]),
+
+  notifications: defineTable({
+    memberId: v.id("members"),
+    createdAt: v.number(),
+    sent: v.boolean(),
+  }).index("byMemberId", ["memberId"]),
 });
 
 export default schema;
